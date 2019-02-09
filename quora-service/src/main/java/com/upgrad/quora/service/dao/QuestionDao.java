@@ -41,4 +41,10 @@ public class QuestionDao {
             return null;
         }
     }
+
+    public List<QuestionEntity> getAllQuestionByUser(final String userId) {
+        TypedQuery<QuestionEntity> typedQuery = entityManager.createQuery("SELECT q from QuestionEntity q WHERE q.userId = :userId", QuestionEntity.class);
+        List<QuestionEntity> resultList = typedQuery.getResultList();
+        return resultList;
+    }
 }

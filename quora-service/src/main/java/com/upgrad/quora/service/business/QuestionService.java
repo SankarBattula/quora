@@ -35,4 +35,8 @@ public class QuestionService {
         QuestionEntity questionEntity = questionDao.deleteQuestion(questionId);
         return questionEntity;
     }
+
+    public List<QuestionEntity> getAllQuestionsByUser(final String userId) {
+        return questionDao.getAllQuestionByUser(userId);
+    }
 }
