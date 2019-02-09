@@ -6,6 +6,8 @@ import java.util.Date;
 
 @Entity
 @Table(name = "question")
+//@NamedQueries()
+
 public class QuestionEntity implements Serializable {
 
     @Id

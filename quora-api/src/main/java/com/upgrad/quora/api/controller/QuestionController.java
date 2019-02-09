@@ -1,5 +1,6 @@
 package com.upgrad.quora.api.controller;
 
+import com.upgrad.quora.api.model.QuestionDetailsResponse;
 import com.upgrad.quora.api.model.QuestionRequest;
 import com.upgrad.quora.api.model.QuestionResponse;
 import com.upgrad.quora.service.business.QuestionService;
@@ -14,7 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -37,5 +40,17 @@ public class QuestionController {
         final QuestionResponse questionResponse = new QuestionResponse().id(createdQuestion.getUuid()).status("CREATED");
 
         return new ResponseEntity<QuestionResponse>(questionResponse, HttpStatus.CREATED);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, path = "/question/all", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public List<QuestionDetailsResponse> getAllQuestions(@RequestHeader("authorization") final String authorization) {
+        List<QuestionDetailsResponse> responseList = new ArrayList<>();
+
+        List<QuestionEntity> questionList = questionService.getAllQuestions();
+        for (QuestionEntity question: questionList) {
+            responseList.add(new QuestionDetailsResponse().id(question.getUuid()).content(question.getContent()));
+        }
+
+        return responseList;
     }
 }
