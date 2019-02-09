@@ -7,7 +7,10 @@ import java.util.Date;
 @Entity
 @Table(name = "question")
 @NamedQueries(
-        @NamedQuery(name = "questionByUuid", query = "SELECT q FROM QuestionEntity q WHERE q.uuid = :uuid")
+        {
+                @NamedQuery(name = "getQuestionByUuid", query = "SELECT q FROM QuestionEntity q WHERE q.uuid = :uuid"),
+                @NamedQuery(name = "deleteQuestionByUuid", query = "DELETE FROM QuestionEntity q WHERE q.uuid = :uuid")
+        }
 )
 
 public class QuestionEntity implements Serializable {

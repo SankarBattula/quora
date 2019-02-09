@@ -29,4 +29,10 @@ public class QuestionService {
         QuestionEntity questionEntity = questionDao.getQuestionById(questionId);
         return questionEntity;
     }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public QuestionEntity deleteQuestion(final String questionId) {
+        QuestionEntity questionEntity = questionDao.deleteQuestion(questionId);
+        return questionEntity;
+    }
 }
