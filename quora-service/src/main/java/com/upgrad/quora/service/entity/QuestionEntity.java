@@ -6,7 +6,9 @@ import java.util.Date;
 
 @Entity
 @Table(name = "question")
-//@NamedQueries()
+@NamedQueries(
+        @NamedQuery(name = "questionByUuid", query = "SELECT q FROM QuestionEntity q WHERE q.uuid = :uuid")
+)
 
 public class QuestionEntity implements Serializable {
 

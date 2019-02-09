@@ -4,6 +4,7 @@ import com.upgrad.quora.service.entity.QuestionEntity;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import java.util.List;
@@ -23,5 +24,13 @@ public class QuestionDao {
         TypedQuery<QuestionEntity> typedQuery = entityManager.createQuery("SELECT q from QuestionEntity q", QuestionEntity.class);
         List<QuestionEntity> resultList = typedQuery.getResultList();
         return resultList;
+    }
+
+    public QuestionEntity getQuestionById(final String questionId) {
+        try {
+            return entityManager.createNamedQuery("questionByUuid", QuestionEntity.class).setParameter("uuid", questionId).getSingleResult();
+        } catch (NoResultException nre) {
+            return null;
+        }
     }
 }

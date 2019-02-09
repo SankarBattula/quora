@@ -23,4 +23,10 @@ public class QuestionService {
     public List<QuestionEntity> getAllQuestions() {
         return questionDao.getAllQuestions();
     }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public QuestionEntity editQuestion(final String questionId) {
+        QuestionEntity questionEntity = questionDao.getQuestionById(questionId);
+        return questionEntity;
+    }
 }
