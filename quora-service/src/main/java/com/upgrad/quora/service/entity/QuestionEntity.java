@@ -8,8 +8,7 @@ import java.util.Date;
 @Table(name = "question")
 @NamedQueries(
         {
-                @NamedQuery(name = "getQuestionByUuid", query = "SELECT q FROM QuestionEntity q WHERE q.uuid = :uuid"),
-                @NamedQuery(name = "deleteQuestionByUuid", query = "DELETE FROM QuestionEntity q WHERE q.uuid = :uuid")
+                @NamedQuery(name = "getQuestionByUuid", query = "SELECT q FROM QuestionEntity q WHERE q.uuid = :uuid")
         }
 )
 
