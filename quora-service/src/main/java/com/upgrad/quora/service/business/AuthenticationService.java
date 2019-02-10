@@ -21,21 +21,25 @@ public class AuthenticationService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public UserAuthEntity authenticate(final String username, final String password) throws AuthenticationFailedException {
-        UserEntity userEntity = userDao.getUserByEmail(username);
+        UserEntity userEntity = userDao.getUserByUserName(username);
         if (userEntity == null) {
-             throw new AuthenticationFailedException("ATH-001", "User with email not found");
+             throw new AuthenticationFailedException("ATH-001", "This username does not exist");
         }
         final String encryptedPassword = CryptographyProvider.encrypt(password, userEntity.getSalt());
         if (encryptedPassword.equals(userEntity.getPassword())) {
             JwtTokenProvider jwtTokenProvider = new JwtTokenProvider(encryptedPassword);
             UserAuthEntity userAuthEntity = new UserAuthEntity();
             userAuthEntity.setUser(userEntity);
+            userAuthEntity.setUuid(userEntity.getUuid());
             final ZonedDateTime now = ZonedDateTime.now();
             final ZonedDateTime expiresAt = now.plusHours(8);
             userAuthEntity.setAccessToken(jwtTokenProvider.generateToken(userEntity.getUuid(), now, expiresAt));
             userAuthEntity.setLoginAt(now);
             userAuthEntity.setExpiresAt(expiresAt);
+
             userDao.createAuthToken(userAuthEntity);
+            userDao.updateUser(userEntity);
+
             return userAuthEntity;
         } else {
             throw new AuthenticationFailedException("ATH-002", "Password failed");

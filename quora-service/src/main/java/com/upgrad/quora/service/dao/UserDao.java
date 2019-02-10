@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import com.upgrad.quora.service.entity.UserEntity;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 
 @Repository
@@ -18,6 +19,15 @@ public class UserDao {
         return userEntity;
     }
 
+    public UserEntity getUserByUserName(final String username) {
+
+        try {
+            return entityManager.createNamedQuery("userByUserName", UserEntity.class).setParameter("userName", username).getSingleResult();
+        } catch (NoResultException nre) {
+            return null;
+        }
+    }
+
     public UserEntity getUserByEmail(final String email) {
         try {
             return entityManager.createNamedQuery("userByEmail", UserEntity.class).setParameter("email", email).getSingleResult();
@@ -25,6 +35,7 @@ public class UserDao {
             return null;
         }
     }
+
 
     public UserAuthEntity createAuthToken(final UserAuthEntity userAuthEntity) {
         entityManager.persist(userAuthEntity);
@@ -40,13 +51,27 @@ public class UserDao {
         }
     }
 
-    public UserEntity deleteUser(String userUuid){
+    public UserAuthEntity getAuthByAccessToken(String accessToken){
         try {
-            return entityManager.createNamedQuery("deleteByUuid", UserEntity.class).setParameter("uuid", userUuid)
+            return entityManager.createNamedQuery("authByAccessToken", UserAuthEntity.class).setParameter("accessToken", accessToken)
                     .getSingleResult();
         }catch(Exception nre){
             return null;
         }
+    }
+
+    public UserAuthEntity signOut(UserAuthEntity userAuthEntity) {
+        entityManager.merge(userAuthEntity);
+        return userAuthEntity;
+    }
+
+    public void deleteUser(UserEntity userEntity,UserAuthEntity userAuthEntity){
+        entityManager.remove(userEntity);
+        entityManager.remove(userAuthEntity);
+    }
+
+    public void updateUser(final UserEntity updatedUserEntity) {
+        entityManager.merge(updatedUserEntity);
     }
 
 }

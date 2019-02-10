@@ -12,6 +12,11 @@ import java.time.ZonedDateTime;
 
 @Entity
 @Table(name = "USER_AUTH")
+@NamedQueries(
+        {
+                @NamedQuery(name = "authByAccessToken", query = "select u from UserAuthEntity u where u.accessToken = :accessToken")
+        }
+)
 public class UserAuthEntity {
 
     @Id
@@ -39,6 +44,17 @@ public class UserAuthEntity {
     @Column(name = "LOGOUT_AT")
     private ZonedDateTime logoutAt;
 
+    @Column(name = "UUID")
+    @Size(max = 64)
+    private String uuid;
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
 
     public long getId() {
         return id;
