@@ -1,10 +1,8 @@
 package com.upgrad.quora.service.business;
 
 import com.upgrad.quora.service.entity.UserAuthEntity;
-import com.upgrad.quora.service.exception.AuthenticationFailedException;
-import com.upgrad.quora.service.exception.SignOutRestrictedException;
-import com.upgrad.quora.service.exception.SignUpRestrictedException;
-import com.upgrad.quora.service.exception.UserNotFoundException;
+import com.upgrad.quora.service.exception.*;
+import com.upgrad.quora.service.type.ActionType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.upgrad.quora.service.dao.UserDao;
@@ -72,7 +70,7 @@ public class UserBusinessService {
         }
     }
 
-    public UserAuthEntity deleteUser(final String userUuid,final String accessToken) throws AuthenticationFailedException{
+    public UserAuthEntity deleteUser(final String userUuid,final String accessToken) throws AuthenticationFailedException,UserNotFoundException{
         UserAuthEntity userAuthEntity = userDao.getAuthByAccessToken(accessToken);
         UserEntity userEntity =  userDao.getUser(userUuid);
         if (userAuthEntity == null) {
@@ -82,13 +80,28 @@ public class UserBusinessService {
             throw new AuthenticationFailedException("ATHR-002", "User is signed out");
         }
         if(userEntity == null){
-            throw new AuthenticationFailedException("USR-001", "User with entered uuid to be deleted does not exist");
-        }else{
-            if (userEntity.getRole().equalsIgnoreCase("nonadmin")) {
+            throw new UserNotFoundException("USR-001", "User with entered uuid to be deleted does not exist");
+        }
+        if (userEntity.getRole().equalsIgnoreCase("nonadmin")) {
                 throw new AuthenticationFailedException("ATHR-003", "Unauthorized Access, Entered user is not an admin");
             }
             userDao.deleteUser(userEntity,userAuthEntity);
             return userAuthEntity;
         }
+
+    public UserAuthEntity getUserByAccessToken(String authorizationToken) throws AuthorizationFailedException {
+        UserAuthEntity userAuthTokenEntity = userDao.getAuthByAccessToken(authorizationToken);
+        if (userAuthTokenEntity == null) {
+            throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
+        }
+        if (userAuthTokenEntity.getLogoutAt() != null) {
+            throw new AuthorizationFailedException("ATHR-002", "User is signed out.Sign in first to delete a question");
+        }
+        UserEntity userEntity =  userDao.getUser(userAuthTokenEntity.getUuid());
+        if (userEntity.getRole().equalsIgnoreCase("nonadmin")) {
+            throw new AuthorizationFailedException("ATHR-003", "Only the question owner or admin can delete the question");
+        }
+        return userAuthTokenEntity;
     }
+
 }

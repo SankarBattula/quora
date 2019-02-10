@@ -9,6 +9,7 @@ import com.upgrad.quora.service.entity.UserAuthEntity;
 import com.upgrad.quora.service.entity.UserEntity;
 import com.upgrad.quora.service.exception.AuthenticationFailedException;
 import com.upgrad.quora.service.exception.SignOutRestrictedException;
+import com.upgrad.quora.service.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -25,16 +26,17 @@ public class AdminController {
 
     @RequestMapping(method = RequestMethod.DELETE, path = "/admin/user/{userId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<?> userDelete(@PathVariable String userId,
-                                                         @RequestHeader("authorization") final String accessToken) throws AuthenticationFailedException {
+                                                         @RequestHeader("authorization") final String accessToken) throws AuthenticationFailedException,UserNotFoundException {
         UserAuthEntity userAuthToken;
         try {
             userAuthToken = userBusinessService.deleteUser(userId,accessToken);
             UserEntity user = userAuthToken.getUser();
         }catch(AuthenticationFailedException authFE){
             ErrorResponse errorResponse = new ErrorResponse().message(authFE.getErrorMessage()).code(authFE.getCode()).rootCause(authFE.getMessage());
-            if(authFE.getCode().equalsIgnoreCase("USR-001"))
-                return new ResponseEntity<ErrorResponse>(errorResponse, HttpStatus.NOT_FOUND);
             return new ResponseEntity<ErrorResponse>(errorResponse, HttpStatus.FORBIDDEN);
+        }catch(UserNotFoundException userNFE){
+            ErrorResponse errorResponse = new ErrorResponse().message(userNFE.getErrorMessage()).code(userNFE.getCode()).rootCause(userNFE.getMessage());
+            return new ResponseEntity<ErrorResponse>(errorResponse, HttpStatus.NOT_FOUND);
         }
         UserEntity user = userAuthToken.getUser();
         SignoutResponse signoutResponse = new SignoutResponse().id(user.getUuid())
