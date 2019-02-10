@@ -693,6 +693,9 @@
     <property name="project.structure.side.proportion" value="0.6643678" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/quora-service/src/main/java/com/upgrad/quora/service/business" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="E:\Trello_quora\quora-api\src\main\resources\endpoints" />
       <recent name="E:\Trello_quora\quora-api\src\main\resources" />
