@@ -29,12 +29,15 @@ import java.util.UUID;
 @RequestMapping("/")
 public class AnswerController {
 
+    // Autowired answer service from business
     @Autowired
     AnswerService answerService;
 
+    // Autowired question service from business
     @Autowired
     QuestionService questionService;
 
+    // Autowired user business service
     @Autowired
     UserBusinessService userBusinessService;
 
@@ -43,10 +46,18 @@ public class AnswerController {
      * @param answerRequest
      * @param questionUuId
      * @param authorization
-     * @return
+     * @return answer response with the status created
      * @throws AuthorizationFailedException
      * @throws InvalidQuestionException
+     *
+     * Method is used to create answer to answer with respect to question id
      */
+
+    // This controller method is called when the request pattern is of type
+    // 'createAnswer' and also the incoming request is of POST Type
+    // The method calls the createAnswer() method in the business logic
+    // Looks for a controller method with mapping of type
+    // '/question/{questionId}answer/create'
     @RequestMapping(method = RequestMethod.POST, path = "/question/{questionId}answer/create", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<?> createAnswer(final AnswerRequest answerRequest, @PathVariable("questionId") final String questionUuId, @RequestHeader final String authorization) throws AuthorizationFailedException, InvalidQuestionException {
         //Authorize the user
@@ -89,10 +100,18 @@ public class AnswerController {
      * @param answerEditRequest
      * @param answerUuId
      * @param authorization
-     * @return
+     * @return edited response with status ok
      * @throws AuthorizationFailedException
      * @throws AnswerNotFoundException
+     *
+     * Method used edit answer with respect to answer id
      */
+    // This controller method is called when the request pattern is of type
+    // 'editAnswerContent' and also the incoming request is of PUT Type
+    // The method calls the editAnswer() method in the business logic passing the
+    // answer to be update
+    // Looks for a controller method with mapping of type
+    // '/answer/edit/{answerId}'
     @RequestMapping(method = RequestMethod.PUT, path = "/answer/edit/{answerId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<?> editAnswerContent(AnswerEditRequest answerEditRequest, @PathVariable("answerId") final String answerUuId, @RequestHeader("authorization") final String authorization) throws AuthorizationFailedException, AnswerNotFoundException {
         //Authorize the user if he has signed in properly
@@ -126,6 +145,22 @@ public class AnswerController {
     }
 
 
+    /**
+     *
+     * @param answerUuId
+     * @param authorization
+     * @return With the status ok
+     * @throws AuthorizationFailedException
+     * @throws AnswerNotFoundException
+     *
+     * Method is used to delete particular answer for an question with respect to answer id
+     */
+    // This controller method is called when the request pattern is of type
+    // 'deleteAnswer' and also the incoming request is of DELETE Type
+    // The method calls the deleteAnswer() method in the business logic passing the
+    // answer to be deleted
+    // Looks for a controller method with mapping of type
+    // '/answer/delete/{answerId}'
     @RequestMapping(method = RequestMethod.DELETE, path = "/answer/delete/{answerId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<?> deleteAnswer(@PathVariable("answerId") final String answerUuId, @RequestHeader("authorization") final String authorization) throws AuthorizationFailedException, AnswerNotFoundException {
         //Authorize the user if he has signed in properly
@@ -154,7 +189,21 @@ public class AnswerController {
         return new ResponseEntity<AnswerDeleteResponse>(answerDeleteResponse, HttpStatus.OK);
     }
 
-
+    /***
+     *
+     * @param questionId
+     * @param authorization
+     * @return
+     * @throws AuthorizationFailedException
+     * @throws InvalidQuestionException
+     * @throws AnswerNotFoundException
+     *
+     * Method is used to get all answer to particular question with respect to question id
+     */
+    // This controller method is called when the request pattern is of type
+    // 'getAllAnswersToQuestion' and also the incoming request is of GET Type
+    // Looks for a controller method with mapping of type
+    // '/answer/all/{questionId}'
     @RequestMapping(method = RequestMethod.GET, path = "/answer/all/{questionId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<?> getAllAnswersToQuestion(@PathVariable("questionId") final String questionId, @RequestHeader("authorization") final String authorization) throws AuthorizationFailedException, InvalidQuestionException, AnswerNotFoundException {
         //Authorize the user if he has signed in properly
