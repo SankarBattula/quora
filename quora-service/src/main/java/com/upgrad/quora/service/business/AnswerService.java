@@ -20,17 +20,21 @@ import java.util.List;
 @Service
 public class AnswerService {
 
+    // Auto wired answerDao to provide an abstract interface
     @Autowired
     AnswerDao answerDao;
 
+    // Auto wired questionDao to provide an abstract interface
     @Autowired
     QuestionDao questionDao;
 
+    // To provide to an abstract interface for creating answer for a particular question
     @Transactional(propagation = Propagation.REQUIRED)
     public Answer createAnswer(Answer answer) {
         return answerDao.createAnswer(answer);
     }
 
+    // To check entered answer has UUID
     @Transactional(propagation = Propagation.REQUIRED)
     public Answer getAnswerForUuId(String answerUuId) throws AnswerNotFoundException {
         Answer answer = answerDao.getAnswerForUuId(answerUuId);
@@ -41,6 +45,7 @@ public class AnswerService {
         }
     }
 
+    // Check is answer owner to edit the answer and provide proper message to user
     @Transactional(propagation = Propagation.REQUIRED)
     public Answer isUserAnswerOwner(String answerUuId, UserAuthEntity authorizedUser, ActionType actionType) throws AnswerNotFoundException, AuthorizationFailedException {
         Answer answer = answerDao.getAnswerForUuId(answerUuId);
@@ -66,16 +71,20 @@ public class AnswerService {
         }
     }
 
+    // For edit answer
     @Transactional(propagation = Propagation.REQUIRED)
     public Answer editAnswer(Answer answer) {
         return answerDao.editAnswer(answer);
     }
 
+    // To delete answer
     @Transactional(propagation = Propagation.REQUIRED)
     public void deleteAnswer(Answer answer) {
         answerDao.deleteAnswer(answer);
     }
 
+
+    // To get all answer for question , if no answer it will give exception
     @Transactional(propagation = Propagation.REQUIRED)
     public List<Answer> getAnswersForQuestion(String questionUuId) throws AnswerNotFoundException, InvalidQuestionException {
         //check if the question exists in question database
